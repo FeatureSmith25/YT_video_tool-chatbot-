@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUBTEXT — Ask any video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">SUBTEXT</span>
+    </div>
+    <p class="brand-tagline">Read between a video's lines.</p>
+
+    <div class="panel">
+      <label class="field-label" for="video-input">Video URL or ID</label>
+      <input id="video-input" class="text-input" type="text"
+             placeholder="https://youtube.com/watch?v=…" autocomplete="off">
+
+      <label class="field-label" for="language-select">Transcript language</label>
+      <select id="language-select" class="select-input">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+      </select>
+
+      <button class="advanced-toggle" id="advanced-toggle" type="button">
+        <span>Advanced settings</span>
+        <svg class="chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="advanced-panel" id="advanced-panel">
+        <div class="slider-row">
+          <div class="slider-label"><span>Chunk size</span><span class="slider-value" id="chunk-size-value">1000</span></div>
+          <input type="range" id="chunk-size" min="300" max="2000" step="100" value="1000">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Chunk overlap</span><span class="slider-value" id="chunk-overlap-value">100</span></div>
+          <input type="range" id="chunk-overlap" min="0" max="400" step="50" value="100">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Chunks per answer (k)</span><span class="slider-value" id="top-k-value">2</span></div>
+          <input type="range" id="top-k" min="1" max="8" step="1" value="2">
+        </div>
+      </div>
+
+      <button class="process-btn" id="process-btn" type="button">
+        <span id="process-btn-label">Process video</span>
+      </button>
+    </div>
+
+    <!-- Timecode-leader style pipeline stepper -->
+    <div class="stepper" id="stepper">
+      <div class="stepper-title">PIPELINE</div>
+      <div class="stepper-track">
+        <div class="step" data-step="fetch"><span class="step-index">01</span><span class="step-name">FETCH</span></div>
+        <div class="step" data-step="chunk"><span class="step-index">02</span><span class="step-name">CHUNK</span></div>
+        <div class="step" data-step="embed"><span class="step-index">03</span><span class="step-name">EMBED</span></div>
+        <div class="step" data-step="index"><span class="step-index">04</span><span class="step-name">INDEX</span></div>
+        <div class="step" data-step="ready"><span class="step-index">05</span><span class="step-name">READY</span></div>
+      </div>
+    </div>
+
+    <div class="video-card" id="video-card" hidden>
+      <img id="video-thumb" src="" alt="Video thumbnail">
+      <div class="video-card-meta">
+        <span class="status-dot"></span>
+        <span id="video-id-label" class="mono"></span>
+      </div>
+      <div class="video-card-sub" id="chunk-count-label"></div>
+      <button class="reset-btn" id="reset-btn" type="button">Clear session</button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="rec-dot"></span>
+        <span class="topbar-title">TRANSCRIPT SESSION</span>
+      </div>
+      <div class="timecode mono" id="timecode">00:00:00:00</div>
+    </header>
+
+    <section class="feed" id="feed">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-glyph">▍▍▍</div>
+        <h2>No video loaded yet</h2>
+        <p>Paste a YouTube link on the left and hit <strong>Process video</strong>.<br>
+           Once it's indexed, ask anything — answers are grounded in the transcript.</p>
+      </div>
+    </section>
+
+    <form class="composer" id="composer">
+      <span class="composer-timecode mono" id="composer-timecode">00:00:00,000</span>
+      <input id="question-input" class="composer-input" type="text"
+             placeholder="Ask something about the video…" autocomplete="off" disabled>
+      <button class="send-btn" id="send-btn" type="submit" disabled>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </form>
+  </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
